@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SecurityOrganizer.com — Continuous Attack Surface & Asset Management</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              dark: '#080c16',
+              surface: '#0f172a',
+              card: '#131d33',
+              border: '#1e293b',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              accent: '#38bdf8',
+            }
+          },
+          animation: {
+            'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 5s ease-in-out infinite',
+            'scanline': 'scanline 4s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            },
+            scanline: {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(400%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070b14;
+      color: #cbd5e1;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 20%, rgba(6, 182, 212, 0.15) 0%, rgba(16, 185, 129, 0.05) 35%, transparent 70%);
+    }
+    .grid-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .glass-card {
+      background: rgba(19, 29, 51, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.12);
+    }
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.2);
+    }
+    .cyber-border {
+      position: relative;
+    }
+    .cyber-border::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.5), transparent 60%, rgba(16, 185, 129, 0.4));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090e17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+
+<body class="bg-brand-dark antialiased selection:bg-brand-cyan/20 selection:text-brand-cyan">
+
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-brand-dark/80 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-500 p-0.5 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition">
+          <div class="w-full h-full bg-[#0a0f1d] rounded-[10px] flex items-center justify-center">
+            <i class="fa-solid fa-shield-halved text-brand-cyan text-lg group-hover:scale-110 transition-transform"></i>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold text-white tracking-tight flex items-center gap-1.5">
+            Security<span class="text-brand-cyan">Organizer</span>
+            <span class="text-xs px-1.5 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 font-mono">.com</span>
+          </span>
+          <span class="text-[10px] tracking-wider text-slate-400 font-mono uppercase">Attack Surface Management</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#features" class="hover:text-brand-cyan transition-colors">Features</a>
+        <a href="#simulation" class="hover:text-brand-cyan transition-colors">Live Simulation</a>
+        <a href="#roi-calculator" class="hover:text-brand-cyan transition-colors">Asset ROI</a>
+        <a href="#pricing" class="hover:text-brand-cyan transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-brand-cyan transition-colors">FAQ</a>
+      </nav>
+
+      <!-- CTA Buttons -->
+      <div class="hidden sm:flex items-center gap-4">
+        <a href="#simulation" class="text-sm font-medium text-slate-300 hover:text-white px-3 py-2 transition">
+          Run Scan
+        </a>
+        <button onclick="openWaitlistModal()" class="relative group overflow-hidden rounded-xl p-px font-semibold text-xs tracking-wide">
+          <span class="absolute inset-0 bg-gradient-to-r from-brand-cyan to-brand-emerald"></span>
+          <span class="relative flex items-center gap-2 px-4 py-2.5 rounded-[11px] bg-slate-950 text-white transition-all duration-200 group-hover:bg-opacity-80">
+            <i class="fa-solid fa-bolt text-brand-cyan text-xs"></i>
+            <span>Join Early Access</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button id="mobileMenuBtn" class="md:hidden text-slate-400 hover:text-white text-xl p-2" aria-label="Toggle Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-brand-surface border-b border-slate-800 px-6 py-6 space-y-4">
+      <a href="#features" class="block text-slate-300 hover:text-brand-cyan text-base">Features</a>
+      <a href="#simulation" class="block text-slate-300 hover:text-brand-cyan text-base">Live Simulation</a>
+      <a href="#roi-calculator" class="block text-slate-300 hover:text-brand-cyan text-base">Asset ROI</a>
+      <a href="#pricing" class="block text-slate-300 hover:text-brand-cyan text-base">Pricing</a>
+      <a href="#faq" class="block text-slate-300 hover:text-brand-cyan text-base">FAQ</a>
+      <div class="pt-4 border-t border-slate-800 flex flex-col gap-3">
+        <button onclick="openWaitlistModal()" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-bold rounded-xl text-center shadow-lg">
+          Join Early Access
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-24">
+    <section class="relative min-h-[90vh] flex items-center justify-center pt-16 pb-20 overflow-hidden grid-pattern hero-glow">
+      <!-- Decorative radial blur lights -->
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div class="absolute top-1/3 left-1/4 w-[400px] h-[300px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-medium mb-8 animate-pulse-subtle shadow-lg shadow-cyan-950/40">
+          <span class="w-2 h-2 rounded-full bg-brand-cyan animate-ping"></span>
+          <span>⚡ Continuous Attack Surface &amp; Asset Monitoring</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.12] max-w-5xl mx-auto">
+          Stop Losing Track of Your <br class="hidden sm:inline" />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-teal-300 to-brand-emerald">
+            Exposed Assets
+          </span> 
+          &amp; Security Posture.
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="mt-6 text-base sm:text-xl text-slate-400 max-w-3xl mx-auto font-normal leading-relaxed">
+          <span class="text-white font-medium">SecurityOrganizer.com</span> continuously maps your shadow subdomains, identifies expiring SSL certs, detects risky open ports, and organizes your assets before malicious scanners exploit them.
+        </p>
+
+        <div class="mt-10 max-w-2xl mx-auto">
+          <form id="heroScanForm" onsubmit="handleQuickScan(event)" class="relative p-1.5 rounded-2xl bg-brand-surface/90 border border-slate-700/80 shadow-2xl shadow-cyan-950/50 flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-grow flex items-center">
+              <span class="absolute left-4 text-slate-400 font-mono text-sm">
+                <i class="fa-solid fa-globe text-brand-cyan"></i>
+              </span>
+              <input 
+                id="scanTargetInput"
+                type="text" 
+                placeholder="Enter company domain (e.g. yourcompany.com)" 
+                required
+                value="acme-corp.io"
+                class="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm sm:text-base text-white placeholder-slate-500 font-mono rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-cyan transition"
+              />
+            </div>
+            <button 
+              type="submit" 
+              class="px-6 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-emerald text-slate-950 font-bold text-sm rounded-xl flex items-center justify-center gap-2 hover:opacity-95 transition-all shadow-lg shadow-cyan-500/25 active:scale-95 whitespace-nowrap">
+              <i class="fa-solid fa-radar text-xs animate-spin" id="scanBtnIcon" style="animation-duration: 3s;"></i>
+              <span>Simulate Domain Audit</span>
+            </button>
+          </form>
+          <div class="mt-3 flex items-center justify-center gap-4 text-xs font-mono text-slate-500">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> No agent install required</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> Non-intrusive DNS scan</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> Instant PDF report</span>
+          </div>
+        </div>
+
+        <section id="simulation" class="mt-16 max-w-5xl mx-auto text-left scroll-mt-28">
+          <div class="glass-card rounded-2xl overflow-hidden cyber-border shadow-2xl relative">
+            
+            <!-- Window header -->
+            <div class="px-5 py-3.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+                <span class="ml-3 text-xs font-mono text-slate-400 flex items-center gap-2">
+                  <i class="fa-solid fa-terminal text-slate-500 text-xs"></i>
+                  <span>securityorganizer-agent://live-inspect</span>
+                </span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span id="scanStatusBadge" class="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-md">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  MONITORING ACTIVE
+                </span>
+                <span class="text-xs font-mono text-slate-500 hidden sm:inline" id="lastUpdatedTimer">Updated: Just now</span>
+              </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div class="p-6 sm:p-8 space-y-6">
+              
+              <!-- Metric Tiles -->
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Health Score -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-xl p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                    <span>SECURITY SCORE</span>
+                    <i class="fa-solid fa-heart-pulse text-emerald-400"></i>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="dashScore" class="text-3xl font-extrabold text-white font-mono">92</span>
+                    <span class="text-xs font-mono text-emerald-400">/100 (Optimal)</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-1.5 mt-3 overflow-hidden">
+                    <div id="dashScoreBar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-700" style="width: 92%"></div>
+                  </div>
+                </div>
+
+                <!-- Subdomains Discovered -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-xl p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                    <span>DISCOVERED HOSTS</span>
+                    <i class="fa-solid fa-sitemap text-brand-cyan"></i>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="dashSubdomains" class="text-3xl font-extrabold text-white font-mono">24</span>
+                    <span class="text-xs font-mono text-slate-400">Subdomains</span>
+                  </div>
+                  <div class="text-[11px] font-mono text-cyan-400 mt-2 flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> +3 discovered this week
+                  </div>
+                </div>
+
+                <!-- SSL Certificate Health -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-xl p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                    <span>SSL EXPIRATION</span>
+                    <i class="fa-solid fa-lock text-amber-400"></i>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="dashSsl" class="text-3xl font-extrabold text-amber-300 font-mono">14</span>
+                    <span class="text-xs font-mono text-slate-400">Days Left</span>
+                  </div>
+                  <div class="text-[11px] font-mono text-amber-400 mt-2 flex items-center gap-1">
+                    <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> Renew dev.acme-corp.io
+                  </div>
+                </div>
+
+                <!-- Port Sentinel -->
+                <div class="bg-slate-900/80 border border-slate-800/90 rounded-xl p-4 flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+                    <span>OPEN PORTS</span>
+                    <i class="fa-solid fa-network-wired text-brand-emerald"></i>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="dashPorts" class="text-3xl font-extrabold text-white font-mono">2</span>
+                    <span class="text-xs font-mono text-slate-400">Exposed</span>
+                  </div>
+                  <div class="text-[11px] font-mono text-emerald-400 mt-2 flex items-center gap-1">
+                    <i class="fa-solid fa-shield-check text-[10px]"></i> SSH (22) Protected
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real-time Asset Activity Feed -->
+              <div class="bg-slate-950/70 rounded-xl border border-slate-800/90 p-4">
+                <div class="flex items-center justify-between mb-3 text-xs font-mono text-slate-400 pb-2 border-b border-slate-800/60">
+                  <span class="uppercase tracking-wider flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Live Asset Inventory &amp; Vulnerability Stream
+                  </span>
+                  <span class="text-slate-500">Auto-Refreshed: Cloud Sync</span>
+                </div>
+
+                <div id="liveStreamTable" class="space-y-2.5 font-mono text-xs">
+                  <!-- Row 1 -->
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-500/20 font-semibold">SECURE</span>
+                      <span class="text-white font-medium" id="previewPrimaryDomain">api.acme-corp.io</span>
+                      <span class="text-slate-500 text-[11px] hidden md:inline">IP: 104.21.58.10 (Cloudflare)</span>
+                    </div>
+                    <div class="flex items-center gap-4 mt-2 sm:mt-0 text-slate-400">
+                      <span>TLS 1.3 Active</span>
+                      <span class="text-emerald-400 font-semibold">Ports: 443</span>
+                    </div>
+                  </div>
+
+                  <!-- Row 2 -->
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-lg bg-slate-900/70 border border-amber-500/30 hover:border-amber-500/50 transition">
+                    <div class="flex items-center gap-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] bg-amber-950 text-amber-300 border border-amber-500/30 font-semibold">WARNING</span>
+                      <span class="text-amber-200 font-medium" id="previewWarningDomain">staging-admin.acme-corp.io</span>
+                      <span class="text-slate-500 text-[11px] hidden md:inline">IP: 159.89.20.12 (AWS-US-EAST)</span>
+                    </div>
+                    <div class="flex items-center gap-4 mt-2 sm:mt-0 text-slate-400">
+                      <span class="text-amber-400">Cert expires in 14 days</span>
+                      <button onclick="simulateFixCert()" class="text-[11px] text-cyan-400 hover:underline">Auto-Renew Alert</button>
+                    </div>
+                  </div>
+
+                  <!-- Row 3 -->
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="flex items-center gap-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 font-semibold">NEW ASSET</span>
+                      <span class="text-white font-medium">grafana-internal.acme-corp.io</span>
+                      <span class="text-slate-500 text-[11px] hidden md:inline">Discovered via DNS TXT record</span>
+                    </div>
+                    <div class="flex items-center gap-4 mt-2 sm:mt-0 text-slate-400">
+                      <span class="text-slate-400">Restricted IP</span>
+                      <span class="text-cyan-400">Tagged: DevOps</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Simulation Action Controls -->
+                <div class="mt-4 pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div class="flex items-center gap-2">
+                    <button onclick="triggerSimulatedScan()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-mono transition flex items-center gap-2">
+                      <i class="fa-solid fa-arrows-rotate text-cyan-400"></i>
+                      <span>Re-scan DNS &amp; Ports</span>
+                    </button>
+                    <span id="scanFeedback" class="text-slate-400 font-mono text-[11px]"></span>
+                  </div>
+                  <button onclick="openWaitlistModal('Live Demo CTA')" class="text-brand-cyan hover:text-white font-mono flex items-center gap-1.5 transition">
+                    <span>Export Full Security Audit (.PDF / JSON)</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <div class="mt-16 pt-8 border-t border-slate-800/80 max-w-4xl mx-auto flex flex-wrap items-center justify-center gap-8 sm:gap-14 text-slate-500 text-xs sm:text-sm font-medium">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shield-check text-cyan-400 text-base"></i>
+            <span>SOC2 Type II Aligned Architecture</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-lock text-cyan-400 text-base"></i>
+            <span>Zero-Knowledge Asset Vault</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-server text-cyan-400 text-base"></i>
+            <span>99.99% Uptime Guarantee</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-user-secret text-cyan-400 text-base"></i>
+            <span>Continuous Shodan / Censys Sync</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="py-20 bg-slate-950/60 border-y border-slate-800/60">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-mono font-semibold text-brand-cyan uppercase tracking-wider">The Cybersecurity Dilemma</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">
+            You can't protect what you don't even know exists.
+          </h2>
+          <p class="text-slate-400 mt-4 text-base">
+            Modern teams spin up microservices, temporary staging subdomains, marketing landing pages, and test buckets every single sprint. Within 6 months, blind spots become attack vectors.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Problem 1 -->
+          <div class="glass-card p-6 rounded-2xl relative">
+            <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Forgotten Shadow IT</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Old staging environments (`dev-v2.domain.com`) left online with default credentials or vulnerable dependencies exposed to mass internet scanners.
+            </p>
+          </div>
+
+          <!-- Problem 2 -->
+          <div class="glass-card p-6 rounded-2xl relative">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-certificate"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Silent SSL &amp; DNS Outages</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Unnoticed certificate expirations drop customer trust and trigger browser red flags. Subdomain DNS takeovers compromise your main brand identity.
+            </p>
+          </div>
+
+          <!-- Problem 3 -->
+          <div class="glass-card p-6 rounded-2xl relative">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Overpriced Enterprise Bloat</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Legacy Attack Surface solutions demand $30,000/year contracts and months of deployment. SecurityOrganizer gives you immediate clarity for a fraction of the cost.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="py-24 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-mono font-semibold text-brand-emerald uppercase tracking-wider">Engineered for Devs &amp; Security Leads</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">
+            Complete Attack Surface Visibility in One Command
+          </h2>
+          <p class="text-slate-400 mt-4 text-base">
+            Everything you need to discover, categorize, monitor, and remediate external cyber threats in real time.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          
+          <!-- Feature 1 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-brand-cyan flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-magnifying-glass-nodes"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Automated Subdomain Discovery</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Continuous reconnaissance using Certificate Transparency logs, active DNS brute-forcing, and public records to uncover forgotten shadow assets.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-cyan-400 gap-1.5">
+              <i class="fa-solid fa-code-commit"></i>
+              <span>Detects orphaned DNS records</span>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-brand-emerald flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">SSL &amp; DNS Drift Sentinel</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Get notified 30, 14, and 3 days before any TLS certificate expires. Receive instant warnings when A, CNAME, or MX records shift unexpectedly.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-emerald-400 gap-1.5">
+              <i class="fa-solid fa-bell"></i>
+              <span>Zero unplanned downtime</span>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-door-open"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Open Port &amp; Service Sniffer</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Identifies exposed administrative ports (SSH 22, Redis 6379, Postgres 5432, RDP 3389) and warns you before attackers scan them.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-purple-400 gap-1.5">
+              <i class="fa-solid fa-shield-virus"></i>
+              <span>CVE banner correlation</span>
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-file-contract"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">1-Click SOC 2 &amp; ISO Reports</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Generate executive-ready PDF &amp; CSV compliance audits that satisfy auditors, insurance underwriters, and enterprise vendor assessments.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-blue-400 gap-1.5">
+              <i class="fa-solid fa-file-pdf"></i>
+              <span>Auditor-certified format</span>
+            </div>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Multi-Channel Incident Alerts</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Route critical alerts directly to your team’s Slack, Discord, PagerDuty, or custom Webhook endpoints with severity grading.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-pink-400 gap-1.5">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Sub-second alert latency</span>
+            </div>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="glass-card p-7 rounded-2xl transition hover:-translate-y-1">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-xl mb-5">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2">Zero-Friction Onboarding</h3>
+            <p class="text-sm text-slate-400 leading-relaxed">
+              No invasive agent daemons to install on servers. Simply input your apex domain (`domain.com`) and SecurityOrganizer takes care of the rest.
+            </p>
+            <div class="mt-4 flex items-center text-xs font-mono text-amber-400 gap-1.5">
+              <i class="fa-solid fa-stopwatch"></i>
+              <span>Live in less than 60 seconds</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="roi-calculator" class="py-20 bg-slate-950/80 border-t border-slate-800">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-mono font-semibold text-cyan-400 uppercase tracking-wider">Attack Surface Estimator</span>
+          <h2 class="text-3xl font-extrabold text-white mt-2">Calculate Your Digital Exposure</h2>
+          <p class="text-slate-400 text-sm mt-2">
+            Estimate how many blind spots exist across your digital footprint based on your company size.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 sm:p-10 cyber-border">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            <div class="space-y-6">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <label class="text-sm font-semibold text-white">Active Engineers / DevOps Team:</label>
+                  <span id="devCountVal" class="text-brand-cyan font-mono font-bold text-base">8 devs</span>
+                </div>
+                <input 
+                  id="devSlider" 
+                  type="range" 
+                  min="1" 
+                  max="60" 
+                  value="8" 
+                  oninput="updateCalculator()"
+                  class="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                />
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <label class="text-sm font-semibold text-white">Primary Root Domains Owned:</label>
+                  <span id="domainCountVal" class="text-brand-cyan font-mono font-bold text-base">3 domains</span>
+                </div>
+                <input 
+                  id="domainSlider" 
+                  type="range" 
+                  min="1" 
+                  max="20" 
+                  value="3" 
+                  oninput="updateCalculator()"
+                  class="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg"
+                />
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-400">
+                <i class="fa-solid fa-lightbulb text-amber-400 mr-1.5"></i>
+                <span class="text-slate-300 font-medium">Industry Benchmark:</span> The average tech company hosts 4.2x more active subdomains and exposed API endpoints than IT leadership is officially aware of.
+              </div>
+            </div>
+
+            <div class="bg-slate-900/90 rounded-xl p-6 border border-slate-800 text-center space-y-4">
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Projected Unmonitored Surface</span>
+              
+              <div class="flex items-center justify-center gap-2">
+                <span id="calcSubdomains" class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-emerald font-mono">
+                  34
+                </span>
+                <span class="text-xs font-mono text-slate-400 text-left leading-tight">
+                  Discovered<br />Assets
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800 text-left font-mono text-xs">
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                  <div class="text-slate-500 text-[10px]">POTENTIAL RISK PORTS</div>
+                  <div id="calcPorts" class="text-amber-400 font-bold text-base">5 Ports</div>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                  <div class="text-slate-500 text-[10px]">AVG BREACH RISK SAVINGS</div>
+                  <div id="calcSavings" class="text-emerald-400 font-bold text-base">$14,200/yr</div>
+                </div>
+              </div>
+
+              <button onclick="openWaitlistModal('Calculator CTA')" class="w-full py-3 bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan border border-brand-cyan/40 rounded-xl text-xs font-mono font-bold transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-shield-virus"></i>
+                <span>Map These Assets Now</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="pricing" class="py-24 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <span class="text-xs font-mono font-semibold text-brand-cyan uppercase tracking-wider">Simple, Transparent Pricing</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-white mt-2">Protect Your Stack at Any Stage</h2>
+          <p class="text-slate-400 mt-3 text-sm sm:text-base">
+            Start free with basic continuous scanning. Upgrade as your digital infrastructure expands.
+          </p>
+
+          <!-- Annual / Monthly Toggle -->
+          <div class="mt-8 inline-flex items-center gap-3 p-1.5 rounded-full bg-slate-900 border border-slate-800">
+            <button id="billingMonthly" onclick="setBilling('monthly')" class="px-4 py-1.5 rounded-full text-xs font-semibold text-white bg-slate-800 transition">Monthly</button>
+            <button id="billingAnnual" onclick="setBilling('annual')" class="px-4 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <span>Annual</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">SAVE 20%</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+          
+          <!-- Tier 1: Free Starter -->
+          <div class="glass-card rounded-2xl p-7 flex flex-col justify-between border-slate-800">
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white">Starter Scout</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">Free Forever</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-6">Essential external asset tracking for solo developers and personal sites.</p>
+              
+              <div class="flex items-baseline gap-1 mb-6">
+                <span class="text-4xl font-extrabold text-white font-mono">$0</span>
+                <span class="text-xs text-slate-500 font-mono">/month</span>
+              </div>
+
+              <ul class="space-y-3 text-xs text-slate-300 border-t border-slate-800/80 pt-6">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 1 Apex Root Domain</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Up to 15 Subdomains</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> SSL Expiry Alerts (7 days notice)</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Weekly automated scans</li>
+                <li class="flex items-center gap-2 text-slate-600"><i class="fa-solid fa-xmark"></i> Open Port Recon</li>
+                <li class="flex items-center gap-2 text-slate-600"><i class="fa-solid fa-xmark"></i> Slack / Webhook integrations</li>
+              </ul>
+            </div>
+
+            <button onclick="openWaitlistModal('Starter Free Plan')" class="w-full mt-8 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition">
+              Get Started Free
+            </button>
+          </div>
+
+          <!-- Tier 2: Pro Hacker/Team (Featured) -->
+          <div class="glass-card rounded-2xl p-7 flex flex-col justify-between border-cyan-500/50 shadow-2xl shadow-cyan-950/40 relative">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-brand-cyan to-brand-emerald text-slate-950 text-[10px] font-bold font-mono uppercase tracking-wider rounded-full">
+              Most Popular for SMBs
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-4 mt-1">
+                <h3 class="text-lg font-bold text-white">Pro Sentinel</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-500/30">Continuous</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-6">Complete attack surface monitoring and alerting for fast-moving engineering teams.</p>
+              
+              <div class="flex items-baseline gap-1 mb-6">
+                <span id="proPrice" class="text-4xl font-extrabold text-white font-mono">$49</span>
+                <span id="proPeriod" class="text-xs text-slate-500 font-mono">/month</span>
+              </div>
+
+              <ul class="space-y-3 text-xs text-slate-300 border-t border-slate-800/80 pt-6">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Up to 5 Apex Root Domains</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Unlimited Subdomains</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Continuous Port &amp; DNS Drift Scans</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Slack, Discord &amp; Webhook alerts</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 1-Click PDF Security Posture Audits</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> 30-Day Change History Log</li>
+              </ul>
+            </div>
+
+            <button onclick="openWaitlistModal('Pro Sentinel Plan')" class="w-full mt-8 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-emerald text-slate-950 font-bold text-xs hover:opacity-95 transition shadow-lg shadow-cyan-500/20">
+              Start 14-Day Free Trial
+            </button>
+          </div>
+
+          <!-- Tier 3: Enterprise -->
+          <div class="glass-card rounded-2xl p-7 flex flex-col justify-between border-slate-800">
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white">Enterprise Vault</h3>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-300">Custom</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-6">Custom ASM solutions, dedicated scanning IPs, and priority pentest triage.</p>
+              
+              <div class="flex items-baseline gap-1 mb-6">
+                <span id="entPrice" class="text-4xl font-extrabold text-white font-mono">$199</span>
+                <span id="entPeriod" class="text-xs text-slate-500 font-mono">/month</span>
+              </div>
+
+              <ul class="space-y-3 text-xs text-slate-300 border-t border-slate-800/80 pt-6">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Unlimited Domains &amp; Assets</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Sub-Hourly Real-time Scanning</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Custom CIDR IP Range Ingestion</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> SOC 2 &amp; ISO 27001 Evidence Packs</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Dedicated Security Engineer SLA</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Custom API Access &amp; SSO (SAML)</li>
+              </ul>
+            </div>
+
+            <button onclick="openWaitlistModal('Enterprise Plan')" class="w-full mt-8 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition">
+              Contact Security Team
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <section class="py-20 bg-slate-950/40 border-y border-slate-800/70">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-mono font-semibold text-brand-emerald uppercase tracking-wider">Social Proof</span>
+          <h2 class="text-3xl font-extrabold text-white mt-1">Trusted by DevOps Engineers</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-card p-6 rounded-xl">
+            <div class="flex items-center gap-1 text-amber-400 text-xs mb-3">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              "SecurityOrganizer flagged a forgotten QA staging subdomain with an exposed Redis port within 10 minutes of plugging in our domain. That alone saved us from a potential ransomware breach."
+            </p>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-cyan-900/60 border border-cyan-500/40 flex items-center justify-center font-mono text-xs text-cyan-300 font-bold">
+                MR
+              </div>
+              <div>
+                <div class="text-xs font-bold text-white">Marcus Ross</div>
+                <div class="text-[11px] text-slate-500">VP of Engineering at FinScale</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-xl">
+            <div class="flex items-center gap-1 text-amber-400 text-xs mb-3">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              "We were paying over $20k a year for an enterprise ASM suite that was complete overkill. SecurityOrganizer gives us the exact high-fidelity alerts we actually care about."
+            </p>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-emerald-900/60 border border-emerald-500/40 flex items-center justify-center font-mono text-xs text-emerald-300 font-bold">
+                SK
+              </div>
+              <div>
+                <div class="text-xs font-bold text-white">Sarah Kowalski</div>
+                <div class="text-[11px] text-slate-500">Security Operations Lead</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-6 rounded-xl">
+            <div class="flex items-center gap-1 text-amber-400 text-xs mb-3">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+              "The automated PDF posture reports are magic. I just export it before our monthly stakeholder security review, and leadership gets instant peace of mind."
+            </p>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-purple-900/60 border border-purple-500/40 flex items-center justify-center font-mono text-xs text-purple-300 font-bold">
+                DL
+              </div>
+              <div>
+                <div class="text-xs font-bold text-white">David Lin</div>
+                <div class="text-[11px] text-slate-500">CTO at StackVibe</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-xs font-mono font-semibold text-brand-cyan uppercase tracking-wider">Frequently Asked Questions</span>
+        <h2 class="text-3xl font-extrabold text-white mt-2">Got Questions? We’ve Got Answers.</h2>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- FAQ 1 -->
+        <div class="glass-card rounded-xl border border-slate-800 overflow-hidden">
+          <button onclick="toggleFaq(1)" class="w-full px-6 py-4 text-left flex items-center justify-between text-white font-medium text-sm sm:text-base">
+            <span>Does SecurityOrganizer require installing software or agents on our servers?</span>
+            <i id="faqIcon1" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+          </button>
+          <div id="faqContent1" class="hidden px-6 pb-5 text-xs sm:text-sm text-slate-400 border-t border-slate-800/60 pt-3">
+            No. SecurityOrganizer uses non-intrusive external reconnaissance. It analyzes public DNS records, Certificate Transparency (CT) logs, and external port responses just like an outside attacker would. There are zero agent daemons or internal access keys required.
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="glass-card rounded-xl border border-slate-800 overflow-hidden">
+          <button onclick="toggleFaq(2)" class="w-full px-6 py-4 text-left flex items-center justify-between text-white font-medium text-sm sm:text-base">
+            <span>How is SecurityOrganizer different from traditional vulnerability scanners?</span>
+            <i id="faqIcon2" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+          </button>
+          <div id="faqContent2" class="hidden px-6 pb-5 text-xs sm:text-sm text-slate-400 border-t border-slate-800/60 pt-3">
+            Traditional vulnerability scanners require you to provide an exact list of IP addresses or URLs. SecurityOrganizer is an Attack Surface Management (ASM) engine: you give it your root domain (`securityorganizer.com`), and it continuously maps all active, legacy, and newly created subdomains automatically.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="glass-card rounded-xl border border-slate-800 overflow-hidden">
+          <button onclick="toggleFaq(3)" class="w-full px-6 py-4 text-left flex items-center justify-between text-white font-medium text-sm sm:text-base">
+            <span>Will scanning slow down or trigger DDoS alerts on our infrastructure?</span>
+            <i id="faqIcon3" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+          </button>
+          <div id="faqContent3" class="hidden px-6 pb-5 text-xs sm:text-sm text-slate-400 border-t border-slate-800/60 pt-3">
+            Not at all. Our probes utilize safe rate-limiting and standard TCP handshakes that do not overload web servers, databases, or firewalls. We adhere strictly to ethical scanning protocols.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="glass-card rounded-xl border border-slate-800 overflow-hidden">
+          <button onclick="toggleFaq(4)" class="w-full px-6 py-4 text-left flex items-center justify-between text-white font-medium text-sm sm:text-base">
+            <span>Can we connect our team's Slack or Discord channel for notifications?</span>
+            <i id="faqIcon4" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+          </button>
+          <div id="faqContent4" class="hidden px-6 pb-5 text-xs sm:text-sm text-slate-400 border-t border-slate-800/60 pt-3">
+            Yes. With the Pro and Enterprise plans, you can connect Webhook URLs to receive immediate alerts when a new subdomain appears, an SSL certificate is about to expire, or an insecure port is detected.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="py-20 relative overflow-hidden">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-3xl p-8 sm:p-14 text-center cyber-border relative overflow-hidden">
+          <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-cyan/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+            Take Control of Your Digital Attack Surface Today.
+          </h2>
+          <p class="mt-4 text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">
+            Don't let a forgotten dev subdomain or expired SSL certificate take down your production service. Join the private beta for <span class="text-white font-semibold">SecurityOrganizer.com</span>.
+          </p>
+
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button onclick="openWaitlistModal('Bottom Banner CTA')" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-brand-cyan to-brand-emerald text-slate-950 font-bold text-sm rounded-xl shadow-lg shadow-cyan-500/25 hover:opacity-95 transition">
+              Get Free Early Access
+            </button>
+            <a href="#simulation" class="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-300 font-medium text-sm rounded-xl border border-slate-700/80 transition text-center">
+              Explore Live Demo
+            </a>
+          </div>
+
+          <div class="mt-6 text-xs text-slate-500 font-mono">
+            🛡️ Free 14-day access • No credit card required • Cancel anytime
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-brand-dark border-t border-slate-900 py-12 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-500/30 flex items-center justify-center text-brand-cyan text-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <div class="text-slate-300 font-bold">SecurityOrganizer.com</div>
+            <div class="text-[11px] text-slate-600 font-mono">Continuous Attack Surface Management</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 font-mono text-slate-400">
+          <a href="#features" class="hover:text-brand-cyan transition">Features</a>
+          <a href="#pricing" class="hover:text-brand-cyan transition">Pricing</a>
+          <a href="mailto:contact@securityorganizer.com" class="hover:text-brand-cyan transition">Security Contact</a>
+          <a href="#" onclick="alertNotice('Privacy terms: Zero personal logs are retained during simulation.')" class="hover:text-brand-cyan transition">Privacy</a>
+        </div>
+
+        <div class="font-mono text-[11px] text-slate-600">
+          &copy; <span id="yearVal">2026</span> SecurityOrganizer.com. All rights reserved.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="waitlistModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+    <div class="glass-card rounded-2xl max-w-md w-full p-6 sm:p-8 border border-cyan-500/30 relative shadow-2xl">
+      <button onclick="closeWaitlistModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-cyan-950 border border-cyan-500/30 text-brand-cyan flex items-center justify-center text-xl mx-auto mb-3">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-xl font-bold text-white">Join SecurityOrganizer Early Access</h3>
+        <p class="text-xs text-slate-400 mt-1" id="modalPlanContext">Get prioritized access to automated continuous asset scanning.</p>
+      </div>
+
+      <form id="modalForm" onsubmit="handleWaitlistSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-mono text-slate-300 mb-1">Work Email</label>
+          <input 
+            type="email" 
+            required 
+            placeholder="alex@company.com" 
+            class="w-full bg-slate-950/80 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-400 font-mono transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono text-slate-300 mb-1">Company Root Domain</label>
+          <input 
+            type="text" 
+            id="modalDomainInput"
+            placeholder="company.com" 
+            class="w-full bg-slate-950/80 border border-slate-700 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-cyan-400 font-mono transition"
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full py-3.5 bg-gradient-to-r from-brand-cyan to-brand-emerald text-slate-950 font-bold rounded-xl text-sm transition hover:opacity-95 shadow-lg shadow-cyan-500/20">
+          Request Instant Access
+        </button>
+      </form>
+
+      <div id="modalSuccessMsg" class="hidden text-center py-4 space-y-2">
+        <div class="w-10 h-10 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center mx-auto text-lg">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div class="text-white font-bold text-sm">You are on the VIP priority list!</div>
+        <p class="text-xs text-slate-400 font-mono">We've saved your domain. Check your inbox for initial attack surface diagnostics.</p>
+        <button onclick="closeWaitlistModal()" class="mt-3 px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-white">Done</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-32 transition-transform duration-300 ease-out">
+    <div class="glass-card border border-brand-cyan/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-xs text-white font-mono">
+      <i class="fa-solid fa-circle-info text-brand-cyan"></i>
+      <span id="toastMsg">Action completed</span>
+    </div>
+  </div>
+
+  <script>
+    // Set Year
+    document.getElementById('yearVal').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Toast messenger helper
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = message;
+      toast.classList.remove('translate-y-32');
+      setTimeout(() => {
+        toast.classList.add('translate-y-32');
+      }, 4000);
+    }
+
+    function alertNotice(msg) {
+      showToast(msg);
+    }
+
+    // Modal Handlers
+    function openWaitlistModal(planName = 'Early Access') {
+      const modal = document.getElementById('waitlistModal');
+      const planContext = document.getElementById('modalPlanContext');
+      const domainVal = document.getElementById('scanTargetInput').value;
+      document.getElementById('modalDomainInput').value = domainVal || '';
+      planContext.textContent = `Target Plan: ${planName}. Receive prioritized access & scanning.`;
+      
+      // Reset form states
+      document.getElementById('modalForm').classList.remove('hidden');
+      document.getElementById('modalSuccessMsg').classList.add('hidden');
+      
+      modal.classList.remove('hidden');
+    }
+
+    function closeWaitlistModal() {
+      document.getElementById('waitlistModal').classList.add('hidden');
+    }
+
+    function handleWaitlistSubmit(e) {
+      e.preventDefault();
+      document.getElementById('modalForm').classList.add('hidden');
+      document.getElementById('modalSuccessMsg').classList.remove('hidden');
+      showToast('🎉 You have successfully reserved your domain slot!');
+    }
+
+    // Quick Scan Simulation handler
+    function handleQuickScan(e) {
+      e.preventDefault();
+      const input = document.getElementById('scanTargetInput').value.trim();
+      if (!input) return;
+
+      const cleanDomain = input.replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+      const scanBtnIcon = document.getElementById('scanBtnIcon');
+      
+      scanBtnIcon.classList.add('fa-spin');
+      showToast(`Initiating non-intrusive scan for: ${cleanDomain}...`);
+
+      setTimeout(() => {
+        scanBtnIcon.classList.remove('fa-spin');
+        
+        // Update dashboard mockup with user-entered domain
+        document.getElementById('previewPrimaryDomain').textContent = `api.${cleanDomain}`;
+        document.getElementById('previewWarningDomain').textContent = `staging.${cleanDomain}`;
+        
+        // Scroll smoothly to the simulation view
+        document.getElementById('simulation').scrollIntoView({ behavior: 'smooth' });
+        showToast(`Scan simulated for ${cleanDomain}! Review inventory below.`);
+      }, 900);
+    }
+
+    // Interactive Re-scan simulation inside dashboard
+    function triggerSimulatedScan() {
+      const feedback = document.getElementById('scanFeedback');
+      const statusBadge = document.getElementById('scanStatusBadge');
+      feedback.textContent = 'Probing DNS, TLS handshakes, and port matrix...';
+      statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-spin"></span> RE-SCANNING';
+      statusBadge.className = 'inline-flex items-center gap-1.5 text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-2.5 py-1 rounded-md';
+
+      setTimeout(() => {
+        feedback.textContent = 'All 24 hosts synchronized with zero critical drift.';
+        statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> MONITORING ACTIVE';
+        statusBadge.className = 'inline-flex items-center gap-1.5 text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-md';
+        showToast('External assets verified. 0 leaks detected.');
+      }, 1500);
+    }
+
+    function simulateFixCert() {
+      const sslVal = document.getElementById('dashSsl');
+      sslVal.textContent = '90';
+      sslVal.className = 'text-3xl font-extrabold text-emerald-400 font-mono';
+      showToast('Cert renewed! Staging SSL certificate validity extended to 90 days.');
+    }
+
+    // FAQ Accordion Toggle
+    function toggleFaq(index) {
+      const content = document.getElementById(`faqContent${index}`);
+      const icon = document.getElementById(`faqIcon${index}`);
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+
+    // Interactive Calculator
+    function updateCalculator() {
+      const devs = parseInt(document.getElementById('devSlider').value, 10);
+      const domains = parseInt(document.getElementById('domainSlider').value, 10);
+
+      document.getElementById('devCountVal').textContent = `${devs} devs`;
+      document.getElementById('domainCountVal').textContent = `${domains} domains`;
+
+      const projectedSubdomains = (domains * 6) + Math.round(devs * 2.2);
+      const exposedPorts = Math.max(2, Math.round(domains * 1.5 + devs * 0.3));
+      const estRiskSavings = Math.round(projectedSubdomains * 380 + devs * 450);
+
+      document.getElementById('calcSubdomains').textContent = projectedSubdomains;
+      document.getElementById('calcPorts').textContent = `${exposedPorts} Ports`;
+      document.getElementById('calcSavings').textContent = `$${estRiskSavings.toLocaleString()}/yr`;
+    }
+
+    // Pricing Billing Toggle
+    let currentBilling = 'monthly';
+    function setBilling(mode) {
+      currentBilling = mode;
+      const btnMonthly = document.getElementById('billingMonthly');
+      const btnAnnual = document.getElementById('billingAnnual');
+      const proPrice = document.getElementById('proPrice');
+      const entPrice = document.getElementById('entPrice');
+
+      if (mode === 'annual') {
+        btnAnnual.classList.add('bg-slate-800', 'text-white');
+        btnAnnual.classList.remove('text-slate-400');
+        btnMonthly.classList.remove('bg-slate-800', 'text-white');
+        btnMonthly.classList.add('text-slate-400');
+
+        proPrice.textContent = '$39';
+        entPrice.textContent = '$159';
+      } else {
+        btnMonthly.classList.add('bg-slate-800', 'text-white');
+        btnMonthly.classList.remove('text-slate-400');
+        btnAnnual.classList.remove('bg-slate-800', 'text-white');
+        btnAnnual.classList.add('text-slate-400');
+
+        proPrice.textContent = '$49';
+        entPrice.textContent = '$199';
+      }
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeWaitlistModal();
+    });
+  </script>
+</body>
+</html>
